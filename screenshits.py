@@ -42,6 +42,7 @@ class ScreenShit:
             try:
                 os.stat(fname)
                 print(
+                    "[FRUGAL MODE ON] "
                     "{} already downloaded, skipping capture".format(fname)
                 )
                 return fname

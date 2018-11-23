@@ -31,8 +31,8 @@ from screenshits import ScreenShit
 
 def main():
     # take screenshit of site, very basic
-    # url = "https://hibshman.net"
-    url = "http://nyuclubs.atspace.cc/"
+    url = "https://hibshman.net"
+    # url = "http://nyuclubs.atspace.cc/"
     screenshit = ScreenShit(url=url)
 
     parsed_hostname = "{}".format(urlparse(url).netloc)
