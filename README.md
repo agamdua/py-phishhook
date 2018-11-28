@@ -36,3 +36,9 @@ $ SCREENSHOT_ACCESS_KEY=<redacted> python main.py
 [FRUGAL MODE ON] nyuclubs.atspace.cc.jpeg already downloaded, skipping capture
 No SSL cert found for <nyuclubs.atspace.cc>, GTFO and contact your site adminitstrator
 ```
+
+```
+$ LOGOGRAB_KEY=<redacted> python logo_detection.py
+Set (as in set theory) of brands detected from hibshman.net.jpeg: {'New York University'}
+Set (as in set theory) of brands detected from nyuclubs.atspace.cc.jpeg: {'New York University'}
+```
