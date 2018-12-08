@@ -25,14 +25,22 @@ maybe fuzzy searching.
 
 from urllib.parse import urlparse
 
+from fuzzywuzzy import fuzz
+from tabulate import tabulate
+
 from cert_detection import get_cert_entities
+from logo_detection import LogoDetection
 from screenshits import ScreenShit
 
 
 def main():
     # take screenshit of site, very basic
-    url = "https://hibshman.net"
+    # url = "https://hibshman.net"
     # url = "http://nyuclubs.atspace.cc/"
+    # url = "https://engineering.nyu.edu"
+    url = "https://www.nyu.edu"
+
+    print("\nAnalyzing URL: <{}>".format(url))
     screenshit = ScreenShit(url=url)
 
     parsed_hostname = "{}".format(urlparse(url).netloc)
@@ -40,12 +48,25 @@ def main():
     if not parsed_hostname:
         raise ValueError("Please enter url in correct format")
 
-    screenshit.capture_and_save_as(
-        "{}.jpeg".format(parsed_hostname)
-    )
+    saved_fname = "{}.jpeg".format(parsed_hostname)
+
+    screenshit.capture_and_save_as(saved_fname)
 
     # TODO: send for logo detection once I have the logograb keys
     # if that takes a while I will try out Google's
+
+    with open(saved_fname, 'rb') as f:
+        image_file = f.read()
+
+    # brands = LogoDetection().get_brand_from_screenshot(image_file)
+    brands = list(LogoDetection().get_brand_from_url(saved_fname))
+
+    for brand in brands[:]:
+        if ' ' in brand:
+            splits = brand.split(' ')
+            brands.append("".join([x[0] for x in splits]))
+
+    print("Brands detected: {}".format(brands))
 
     # SSL cert info
     cert_info = get_cert_entities(url)
@@ -57,16 +78,71 @@ def main():
             .format(parsed_hostname)
         )
     else:
-        # TODO: compare this to the brand we think is the owner, based on
-        # logo detection
         print(
-            "SSL Certificate issued to <{}> by <{}>".format(
-                cert_info['issued_to'],
+            "SSL Certificate issued to <{}> by <{}>\n".format(
+                cert_info['issued_to']['commonName'],
                 cert_info['issued_by']
             )
         )
 
-    # TODO: url fuzzy matching
+        comparison_data = []
 
+        comparison_list = list(cert_info['issued_to'].values())
+
+        for brand in brands:
+            for comparison_point in comparison_list:
+                # naive detection for urls, only supporting up to 2 subdomains
+                if len(comparison_point.split('.')) <= 4:
+                    # print(
+                    #     "Breaking down {} into parts".format(
+                    #         comparison_point
+                    #     )
+                    # )
+
+                    for item in comparison_point.split('.'):
+                        match = fuzz.ratio(item.upper(), brand.upper())
+                        note = "-"
+
+                        if match > 70:
+                            note = "Potential evidence that owner is legit"
+                            print(
+                                "========================potential match detected!=======================")  # noqa
+                            print(
+                                "Comparison between {} and {} = {}".format(
+                                    item,
+                                    brand,
+                                    match,
+                                )
+                            )
+                            print(
+                                "========================================================================")  # noqa
+
+                        comparison_data.append([item, brand, match, note])
+
+                else:
+                    match = fuzz.ratio(comparison_point.upper(), brand.upper())
+                    note = "-"
+                    if match > 70:
+                        note = "Potential evidence that owner is legit"
+                        print(
+                            "========================potential match detected!=======================")  # noqa
+                        print(
+                            "Comparison between {} and {} = {}".format(
+                                comparison_point,
+                                brand,
+                                match,
+                            )
+                        )
+                        print(
+                            "========================================================================")  # noqa
+                    comparison_data.append([comparison_point, brand, match, note])
+
+        print("\n\nFull Comparison Table: \n")
+        print(
+            tabulate(
+                comparison_data,
+                headers=["Item", "Brand", "Match %", "Note"]
+            )
+        )
 
 main()

@@ -44,11 +44,11 @@ def get_cert_entities(url):
         }
 
     subject = dict(x[0] for x in cert['subject'])
-    issued_to = subject['commonName']
+    # issued_to_domain = subject['commonName']
     issuer = dict(x[0] for x in cert['issuer'])
     issued_by = issuer['commonName']
 
     return {
-        'issued_to': issued_to,
+        'issued_to': subject,
         'issued_by': issued_by,
     }
