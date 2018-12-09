@@ -30,18 +30,18 @@ from tabulate import tabulate
 
 from cert_detection import get_cert_entities
 from logo_detection import LogoDetection
-from screenshits import ScreenShit
+from screenshots import ScreenShot
 
 
 def main():
-    # take screenshit of site, very basic
+    # take screenshot of site, very basic
     # url = "https://hibshman.net"
     # url = "http://nyuclubs.atspace.cc/"
     # url = "https://engineering.nyu.edu"
     url = "https://www.nyu.edu"
 
     print("\nAnalyzing URL: <{}>".format(url))
-    screenshit = ScreenShit(url=url)
+    screenshot = ScreenShot(url=url)
 
     parsed_hostname = "{}".format(urlparse(url).netloc)
 
@@ -50,7 +50,7 @@ def main():
 
     saved_fname = "{}.jpeg".format(parsed_hostname)
 
-    screenshit.capture_and_save_as(saved_fname)
+    screenshot.capture_and_save_as(saved_fname)
 
     # TODO: send for logo detection once I have the logograb keys
     # if that takes a while I will try out Google's

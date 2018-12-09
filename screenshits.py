@@ -2,7 +2,7 @@ import os
 import requests
 
 
-class ScreenShit:
+class ScreenShot:
     BASE_URL = "http://api.screenshotlayer.com/api/capture"
 
     def __init__(self, url):

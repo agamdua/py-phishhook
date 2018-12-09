@@ -22,8 +22,8 @@ Does not analyze URL yet.
 ### In operation
 
 *Note* The screenshot API I am using rate limits to 100/month then charges.
-I have added a `FRUGAL_MODE` feature that checks if the screnshit for the URL is
-already saved, then it doesn't screenshit again via the API.
+I have added a `FRUGAL_MODE` feature that checks if the screnshot for the URL is
+already saved, then it doesn't screenshot again via the API.
 
 ```
 $ SCREENSHOT_ACCESS_KEY=<redacted> python main.py
